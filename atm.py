@@ -24,6 +24,7 @@ def createAccount(customer_id,account_type):
         db.commit()
 
 def customerLogin():
+    #TODO: handle when customer gives wrong customer ID
     customerID = input('Enter customer ID: ')
     customerSql = """select * from customer where customer_id = %s """
     cursor.execute(customerSql,(customerID))
@@ -36,7 +37,7 @@ def customerLogin():
             print('Login successful!')
             break
         elif tries > 3:
-            print('gtfo')
+            raise Exception('gtfo')
             break
         else:
             pin = input('Incorrect PIN. \nEnter four digit PIN: ')
@@ -51,10 +52,31 @@ def selectAccount(customer):  #problem here or on line 52
     accountSql = """select * from account where customer_id = %s """
     cursor.execute(accountSql,(customer))
     accounts = cursor.fetchall()
+
+    #Display list of accounts
     print('Accounts:')
     for i in range(len(accounts)):
         print('{0}. {1}'.format(i+1, accounts[i][2]))
-    selection = int(input('Select account: ')) -1
+
+    #Create list of accounts for input validation
+    accountList = []
+    for i in range(len(accounts)):
+		    accountList.append(accounts[i][0])
+
+    #Get valid account from user
+    selection = 0
+    while selection not in accountList:
+        while True:
+            try:
+                selection = int(input('Select account: '))
+            except ValueError:
+                print("Not a valid account")
+                continue
+            else:
+                break
+        print('Not a valid account')
+
+    selection = int(selection) -1
     print('You selected your {0} account.'.format(accounts[selection][2]))
     return accounts[selection][0]
 

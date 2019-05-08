@@ -98,11 +98,13 @@ def checkBalance(account):
         return 0
     #need to do some kind of query that pulls the max tx ID or sort by tx ID to get most recent Balance
 
-def depositTx():
+def depositTx(account):
     while True:
         depositAmt = input('Enter deposit amount: ')
         if float(depositAmt) <= 0:
             print('Deposit amount must be greater than 0')
+        elif float(depositAmt) > 100000:
+            print('Deposit amount must be less than or equal to $100,000')
         else:
             break
     depositSql = """ INSERT INTO transaction (account_id,transaction_type,transaction_amt,account_balance)
@@ -113,7 +115,7 @@ def depositTx():
     print('Your balance is now {}'.format(newBalance))
 
 
-def withdrawalTx():
+def withdrawalTx(account):
     while True:
         withdrawalAmt = input('Enter withdrawal amount: ')
         if float(withdrawalAmt) <= 0:
@@ -151,24 +153,45 @@ def admin():
     elif selection == '2':
         print('Work in progress')
 
+def displayAllTx(account):
+    #try:
+    allTxSql = """select transaction_type ,transaction_amt ,account_balance from transaction where account_id = %s order by transaction_id"""
+    print(account)
+    cursor.execute(allTxSql,(account))
+    allTx = cursor.fetchall()
+    type(allTx)
+    print('Transaction Type | Transaction Amt | Account Balance')
+    for i in range(len(allTx)):
+        txType = allTx[i][0]
+        txAmt = allTx[i][1]
+        bal = allTx[i][2]
+        print('{0:>17} {1:>17} {2:>16}'.format(txType, str(txAmt), str(bal)))
 
+#TODO: make it clear which account we are working in
+#TODO: limit withdrawal/deposit size
 
 def menuSelection():
     customer = customerLogin()
     account = selectAccount(customer)
     print(checkBalance(account))
     while True:
-        print('Menu\n1. Check Balance\n2. Deposit\n3. Withdrawal\n4. Switch Account\n5. Exit')
+        print('Menu\n1. Check Balance\n2. Deposit\n3. Withdrawal\n4. Switch Account\n5. Transaction List\n6. Exit')
         selection = input('Enter selection: ')
         if int(selection) == 1:
             print('Your account balance is : %s' % checkBalance(account))
+            input('')
         elif int(selection) == 2:
-            depositTx()
+            depositTx(account)
+            input('')
         elif int(selection) == 3:
-            withdrawalTx()
+            withdrawalTx(account)
+            input('')
         elif int(selection) == 4:
             account = selectAccount(customer)
         elif int(selection) == 5:
+            displayAllTx(account)
+            input('')
+        elif int(selection) == 6:
             print('Thank you!')
             break
 

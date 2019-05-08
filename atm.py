@@ -113,7 +113,6 @@ def depositTx():
     print('Your balance is now {}'.format(newBalance))
 
 
-#TODO: make sure they have available balance
 def withdrawalTx():
     while True:
         withdrawalAmt = input('Enter withdrawal amount: ')
@@ -155,6 +154,9 @@ def admin():
 
 
 def menuSelection():
+    customer = customerLogin()
+    account = selectAccount(customer)
+    print(checkBalance(account))
     while True:
         print('Menu\n1. Check Balance\n2. Deposit\n3. Withdrawal\n4. Switch Account\n5. Exit')
         selection = input('Enter selection: ')
@@ -165,12 +167,9 @@ def menuSelection():
         elif int(selection) == 3:
             withdrawalTx()
         elif int(selection) == 4:
-            print('Not ready yet')
+            account = selectAccount(customer)
         elif int(selection) == 5:
             print('Thank you!')
             break
 
-customer = customerLogin()
-account = selectAccount(customer)
-print(checkBalance(account))
 menuSelection()

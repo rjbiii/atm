@@ -14,7 +14,7 @@ def createCustomer():
     db.commit()
 
 def createAccount(customer_id,account_type):
-    #TODO: check if customer_id exists, if not, then ConnectionError
+    #TODO: check if customer_id exists, if not, then ConnectionError?
     customerExists = """select * from customer where customer_id = %s"""
     cursor.execute(customerExists,(customer_id))
     result = cursor.rowcount
@@ -24,7 +24,6 @@ def createAccount(customer_id,account_type):
         db.commit()
 
 def customerLogin():
-    #TODO: handle when customer gives wrong customer ID
     tries = 1
     while True:
         customerID = input('Enter customer ID: ')
